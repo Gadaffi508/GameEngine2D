@@ -1,2 +1,12 @@
 ﻿  Game.cpp
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(59,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(59,36): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(60,57): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(60,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(60,36): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(61,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(61,40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(62,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(62,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yusuf\source\repos\Engine\GameEngine2D\Engine\Engine\Core\Game.cpp(62,22): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Engine.vcxproj -> C:\Users\yusuf\source\repos\Engine\GameEngine2D\x64\Debug\Engine.exe

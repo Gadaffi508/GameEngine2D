@@ -1,20 +1,20 @@
 #include "Game.h"
 #include <iostream>
+#include <SDL2/SDL.H>
+
+constexpr int TARGET_FPS = 60;
+constexpr int FRAME_DELAY = 1000 / TARGET_FPS;
 
 using namespace std;
 
-Game::Game()
-{
+Game::Game() {}
 
-}
-
-Game::~Game()
-{
-	ShutDown();
-}
+Game::~Game() { ShutDown(); }
 
 bool Game::Init(const string& title, int width, int height)
 {
+	m_Physics.Init(PPM, 0.f, 0.f);
+
 	m_WindowWidth = width;
 	m_WindowHeight = height;
 
@@ -50,17 +50,57 @@ bool Game::Init(const string& title, int width, int height)
 
 	SDL_QueryTexture(m_BrickTex, nullptr, nullptr, &m_BrickDst.w, &m_BrickDst.h);
 
+	m_BrickBody = m_Physics.CreateBox(
+		m_BrickPos.x + m_BrickDst.w / 2,
+		m_BrickPos.y + m_BrickDst.h / 2,
+		(float)m_BrickDst.w, (float)m_BrickDst.h,
+		true, 1.f, 0.8f);
+
+	m_Physics.CreateBox(m_WindowWidth / 2, 0, m_WindowWidth, 10, false);
+	m_Physics.CreateBox(m_WindowWidth / 2, m_WindowHeight, m_WindowWidth, 10, false);
+	m_Physics.CreateBox(0, m_WindowHeight / 2, 10, m_WindowHeight, false);
+	m_Physics.CreateBox(m_WindowWidth, m_WindowHeight / 2, 10, m_WindowHeight, false);
+
 	m_isRunning = true;
 	return true;
 }
 
 void Game::Run()
 {
+	Uint64 now = SDL_GetPerformanceCounter();
+	Uint64 freq = SDL_GetPerformanceFrequency();
+
+
+	Uint32 fpsTimer = SDL_GetTicks();
+	int FrameCount = 0;
+
+
 	while (m_isRunning)
 	{
+		Uint64 newNow = SDL_GetPerformanceCounter();
+		float dt = static_cast <float> (newNow - now) / freq;
+		now = newNow;
+
+		FrameCount++;
+
+		Uint32 frameStart = SDL_GetTicks();
+
 		ProcessInput();
-		Update(0.0f);
+		Update(dt);
 		Render();
+
+		Uint32 elapsed = SDL_GetTicks() - frameStart;
+		if (elapsed < FRAME_DELAY)
+		{
+			SDL_Delay(FRAME_DELAY - elapsed);
+		}
+
+		if (SDL_GetTicks() - fpsTimer >= 1000)
+		{
+			cout << "FPS : " << FrameCount << endl;
+			FrameCount = 0;
+			fpsTimer += 1000;
+		}
 	}
 }
 
@@ -96,35 +136,44 @@ void Game::ProcessInput()
 		default:
 			break;
 		}
+
+		const Uint8* keys = SDL_GetKeyboardState(nullptr);
+
+		m_InputDir = { 0.f,0.f };
+		if (keys[SDL_SCANCODE_W]) m_InputDir.y = -1.f;
+		if (keys[SDL_SCANCODE_S]) m_InputDir.y = 1.f;
+		if (keys[SDL_SCANCODE_A]) m_InputDir.x = -1.f;
+		if (keys[SDL_SCANCODE_D]) m_InputDir.x = 1.f;
 	}
 }
 
-void Game::Update(float)
+void Game::Update(float dt)
 {
-	m_BrickPos.x += m_BrickVel.x;
-	m_BrickPos.y += m_BrickVel.y;
+	m_Physics.Step(dt);
 
-	if (m_BrickPos.x <0 || m_BrickPos.x + m_BrickDst.w > m_WindowWidth)
+	b2Vec2 impulse{ m_InputDir.x * 0.5f, m_InputDir.y * 0.5f };
+	if (impulse.LengthSquared() > 0)
 	{
-		m_BrickVel.x *= -1;
+		m_BrickBody->ApplyLinearImpulseToCenter(impulse, true);
 	}
 
-	if (m_BrickPos.y <0 || m_BrickPos.y + m_BrickDst.h > m_WindowHeight)
-	{
-		m_BrickVel.y *= -1;
-	}
+	b2Vec2 p = m_BrickBody->GetPosition();
+	m_BrickPos.x = p.x * PPM - m_BrickDst.w / 2;
+	m_BrickPos.y = p.y * PPM - m_BrickDst.h / 2;
 }
 
 void Game::Render()
 {
-
 	SDL_SetRenderDrawColor(m_Renderer, 30, 30, 30, 255);
 	SDL_RenderClear(m_Renderer);
 
+	m_RQ.Clear();
+
 	m_BrickDst.x = static_cast<int> (m_BrickPos.x);
 	m_BrickDst.y = static_cast<int> (m_BrickPos.y);
-
-	SDL_RenderCopy(m_Renderer,m_BrickTex,nullptr,&m_BrickDst);
+	m_RQ.Add({m_BrickTex, m_BrickDst, SDL_Rect{0,0,0,0},10});
+	
+	m_RQ.Flus(m_Renderer);
 
 	SDL_RenderPresent(m_Renderer);
 }
@@ -145,6 +194,8 @@ void Game::ShutDown()
 
 		m_Window = nullptr;
 	}
+
+	m_Physics.ShutDown();
 
 	SDL_Quit();
 }

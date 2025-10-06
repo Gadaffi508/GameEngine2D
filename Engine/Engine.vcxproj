@@ -21,12 +21,16 @@
   <ItemGroup>
     <ClCompile Include="Application\main.cpp" />
     <ClCompile Include="Engine\Core\Game.cpp" />
+    <ClCompile Include="Engine\Core\PhysicSystem.cpp" />
+    <ClCompile Include="Engine\Core\RenderQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Game.h" />
+    <ClInclude Include="Engine\Core\PhysicSystem.h" />
+    <ClInclude Include="Engine\Core\RenderQueue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -135,11 +139,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\SDL2Package.1.0.0\build\native\SDL2Package.targets" Condition="Exists('..\packages\SDL2Package.1.0.0\build\native\SDL2Package.targets')" />
+    <Import Project="..\packages\Box2D.2.3.0\build\native\Box2D.targets" Condition="Exists('..\packages\Box2D.2.3.0\build\native\Box2D.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SDL2Package.1.0.0\build\native\SDL2Package.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SDL2Package.1.0.0\build\native\SDL2Package.targets'))" />
+    <Error Condition="!Exists('..\packages\Box2D.2.3.0\build\native\Box2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Box2D.2.3.0\build\native\Box2D.targets'))" />
   </Target>
 </Project>
